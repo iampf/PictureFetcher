@@ -117,7 +117,7 @@ class IconFinder:
 
 if __name__ == '__main__':
 	
-	i = IconFinder(thread_num=10)
+	i = IconFinder(thread_num=20)
 	i.start()
 	'''
 	category, urls = IconFinder().getCategory()
