@@ -2,7 +2,12 @@
 import urllib2, urllib
 
 def GetData(url):
-	return urllib2.urlopen(url).read()
+	for i in range(5):
+		try:
+			return urllib2.urlopen(url).read()
+		except:
+			pass
+	return None
 
 
 def StorePicture(url, file_name):
@@ -10,6 +15,7 @@ def StorePicture(url, file_name):
 		try:
 			urllib.urlretrieve(url, filename=file_name)
 			break
-		except:
+		except Exception, e:
+			print url, str(e)
 			pass
 

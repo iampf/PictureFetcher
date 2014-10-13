@@ -71,11 +71,14 @@ class IconFinder:
 
 	def getPicture(self, category, url):
 		html = GetData(url)
-		b = bs(html)
-		for i in b.find_all('img', attrs={'class':True}):
-			file_name = category + '/' + i['src'].split('/')[-1]
-			if not os.path.exists(file_name):
-				StorePicture(i['src'], file_name)
+		if html != None:
+			b = bs(html)
+			for i in b.find_all('img', attrs={'class':True}):
+				file_name = category + '/' + i['src'].split('/')[-1]
+				if not os.path.exists(file_name):
+					StorePicture(i['src'], file_name)
+		else:
+			pass
 			
 
 	def getPictures(self, html, category):
@@ -85,8 +88,16 @@ class IconFinder:
 			url = 'http://www.iconfinder.com' + i.find('h4').a['href']
 			print category+c
 			if not os.path.exists(category+c):
-				os.mkdir(category+c)
+				try:
+					os.mkdir(category+c)
+				except:
+					try:
+						os.mkdir(category+c.replace('/','_'))
+					except:
+						pass
 
+					self.getPicture( category+c.replace('/','_'), url)
+					continue
 			self.getPicture( category+c, url)
 
 			
