@@ -19,6 +19,33 @@ class Worker(threading.Thread):
 			self.queue.task_done()
 
 	def getPicturesFromCategory(self, category, url):
+		category = 'data/veryicon/' + category
+		if not os.path.exists('data'):
+			os.mkdir('data')
+		if not os.path.exists('data/veryicon/'):
+			os.mkdir('data/veryicon/')
+		if not os.path.exists(category):
+			os.mkdir(category)
+		html = GetData(url)
+		b = bs(html)
+		urls = []
+		for u in b.find_all(class_='title'):
+			urls.append('http://www.veryicon.com' + u.a['href'])
+			#print 'http://www.veryicon.com' + u.a['href']
+		for u in urls:
+			html = GetDate(u)
+			b = bs(html)
+			for img in b.find_all('a'):
+				if '/icon/png' in img['href']:
+					print img['href']
+					break
+
+
+		#for u in urls:
+			
+			
+
+		'''
 		print url
 		category = 'data/stockvault/' + category
 		if not os.path.exists('data'):
@@ -37,8 +64,9 @@ class Worker(threading.Thread):
 				img_url = 'http://www.stockvault.net' + img.a['sample']
 				file_name = category + '/' + img.a['title'] + '.jpg'
 				if not os.path.exists(file_name):
-					StorePicture(img_url, file_name)
 
+					StorePicture(img_url, file_name)
+		'''
 
 
 class VeryIcon:
@@ -71,12 +99,13 @@ class VeryIcon:
 			urls.append('http://www.veryicon.com'+item.a['href'])
 			category.append(item.a.text.split('(')[0].rstrip())
 
-		for url in urls:
-			html = GetData(url)
+
+		for i in range(len(urls)):
+			html = GetData(urls[i])
 			b = bs(html)
 			c = b.find_all(class_='blue')
-			for i in c:
-				print i['href']
+			for url in c:
+				 self.queue.put( (category[i], 'http://www.veryicon.com' + url['href'], ) )
 
 		'''
 		categories = b.find(class_='categoryitems')
@@ -107,7 +136,10 @@ class VeryIcon:
 			self.queue.task_done()
 
 if __name__ == '__main__':
-	#s = StockVault(thread_num=30)
-	#s.start()
+	s = VeryIcon(thread_num=20)
+	s.start()
+	'''
 	s = VeryIcon(thread_num=30)
 	s.getCategory()
+	s.getQueue()
+	'''
