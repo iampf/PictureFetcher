@@ -13,6 +13,7 @@ def GetData(url):
 def StorePicture(url, file_name):
 	for i in range(5):
 		try:
+			print url, file_name
 			urllib.urlretrieve(url, filename=file_name)
 			break
 		except Exception, e:

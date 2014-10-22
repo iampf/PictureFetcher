@@ -33,11 +33,25 @@ class Worker(threading.Thread):
 			urls.append('http://www.veryicon.com' + u.a['href'])
 			#print 'http://www.veryicon.com' + u.a['href']
 		for u in urls:
-			html = GetDate(u)
+			html = GetData(u)
 			b = bs(html)
 			for img in b.find_all('a'):
 				if '/icon/png' in img['href']:
 					print img['href']
+					c = img['href'].split('/')[4].encode('utf-8')
+					if '%20' in c:
+						c = c.replace('%20', ' ')
+					
+					if not os.path.exists(category + '/' + c):
+						os.mkdir(category + '/' + c)
+
+					file_name = img['href'].split('/')[-1]
+					if '%20' in file_name:
+						file_name = file_name.replace('%20', ' ')
+
+					file_name = category + '/' + c + '/' + file_name
+					if not os.path.exists(file_name):
+						StorePicture('http://www.veryicon.com'+img['href'],file_name)								
 					break
 
 
